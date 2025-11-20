@@ -4,7 +4,7 @@
 Este exemplo demonstra a implementação do **Padrão Abstract Factory** para criar componentes de UI multiplataforma. O padrão fornece uma interface para criar famílias de objetos relacionados sem especificar suas classes concretas.
 
 ## Estrutura do Padrão
-![](../assets/img/abstraic_factory.png)
+![](../../assets/img/abstraic_factory.png)
 ### Produtos Abstratos
 - `Botao` - Classe base abstrata para botões
 - `Checkbox` - Classe base abstrata para caixas de seleção

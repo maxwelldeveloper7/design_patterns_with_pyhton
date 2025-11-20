@@ -4,7 +4,7 @@
 Este exemplo demonstra a implementação do **Padrão Builder** para construir objetos complexos de forma incremental e flexível. O padrão permite criar diferentes representações de um objeto usando o mesmo processo de construção.
 
 ## Estrutura do Padrão
-![](../assets/img/builder.png)
+![](../../assets/img/builder.png)
 ### Produto
 - `Imovel` - Objeto complexo sendo construído com múltiplos atributos opcionais
 
