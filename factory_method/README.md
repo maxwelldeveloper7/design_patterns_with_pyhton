@@ -7,6 +7,7 @@ Esta implementação demonstra o padrão de design Factory Method usando um sist
 O padrão Factory Method fornece uma interface para criar objetos sem especificar suas classes exatas. Ele delega a criação de objetos para subclasses, promovendo baixo acoplamento e extensibilidade.
 
 ## Componentes
+![](../assets/img/factory_method.png)
 
 ### Interface do Produto
 - **`Notificacao`**: Classe base abstrata que define a interface comum para todos os tipos de notificação
