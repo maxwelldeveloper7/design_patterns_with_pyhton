@@ -1,2 +1,2 @@
-# design_patterns_with_pyhton
-Práticas de Padrões de Projeto com Python
+# Práticas de Padrões de Projeto com Python
+![](./assets/img/Design_Patterns.svg)
