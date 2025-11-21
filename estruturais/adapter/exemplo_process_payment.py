@@ -1,14 +1,22 @@
+from abc import ABC, abstractmethod
+
 # -------------------------------
 # Interface esperada pelo sistema
 # -------------------------------
 
-class PaymentProcessor:
+class PaymentProcessor(ABC):
     """
-    Interface padrão que o sistema moderno espera utilizar.
-    Garante padronização e permite desacoplamento da implementação.
+    Interface formal que define o contrato para qualquer processador de pagamentos.
+    A utilização de ABC contribui para a segurança do design e evita implementações incompletas.
     """
-    def process_payment(self, amount):
-        raise NotImplementedError("A subclasse deve implementar process_payment().")
+
+    @abstractmethod
+    def process_payment(self, amount: float) -> None:
+        """
+        Processa um pagamento no valor especificado.
+        As subclasses devem implementar este método obrigatoriamente.
+        """
+        pass
 
 
 # -------------------------------
@@ -17,10 +25,11 @@ class PaymentProcessor:
 
 class LegacyPaymentSystem:
     """
-    Biblioteca antiga com interface incompatível.
-    O método make_transaction() possui outro nome e outra semântica.
+    Classe de um sistema antigo cuja interface é incompatível com a atual.
+    O método make_transaction() possui assinatura diferente.
     """
-    def make_transaction(self, value):
+
+    def make_transaction(self, value: float) -> None:
         print(f"[LEGADO] Pagamento realizado no valor de R$ {value:.2f}")
 
 
@@ -30,21 +39,19 @@ class LegacyPaymentSystem:
 
 class PaymentAdapter(PaymentProcessor):
     """
-    Adapter que converte a interface legada para a interface moderna.
-    Mantém o sistema desacoplado e evita reescrever código legado.
+    Adapter que converte a interface moderna (process_payment)
+    para a interface antiga (make_transaction).
     """
 
-    def __init__(self, legacy_system):
-        # Guarda a instância do sistema legada.
+    def __init__(self, legacy_system: LegacyPaymentSystem) -> None:
         self._legacy_system = legacy_system
 
-    def process_payment(self, amount):
+    def process_payment(self, amount: float) -> None:
         """
-        Adapta a chamada do método moderno para o método legado.
-        Este método faz a tradução entre as interfaces.
+        Implementação do método da interface moderna.
+        Aqui ocorre a chamada adaptada ao sistema legado.
         """
-        # Aqui ocorre a adaptação para a interface antiga.
-        amount += 10  # Adiciona taxa de serviço
+        amount += amount * 0.01
         self._legacy_system.make_transaction(amount)
 
 
@@ -52,11 +59,7 @@ class PaymentAdapter(PaymentProcessor):
 # Uso prático do Adapter
 # -------------------------------
 
-# Sistema legada pré-existente
 legacy = LegacyPaymentSystem()
+processor = PaymentAdapter(legacy)
 
-# Adaptando a interface legada para o padrão moderno
-payment_processor = PaymentAdapter(legacy)
-
-# Agora, o sistema moderno usa o método que ele espera ter:
-payment_processor.process_payment(150.00)
+processor.process_payment(150.00)
