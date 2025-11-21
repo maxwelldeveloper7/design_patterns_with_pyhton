@@ -51,6 +51,7 @@ class PaymentAdapter(PaymentProcessor):
         Implementação do método da interface moderna.
         Aqui ocorre a chamada adaptada ao sistema legado.
         """
+        # Adiciona uma taxa de 1% para o sistema legado
         amount += amount * 0.01
         self._legacy_system.make_transaction(amount)
 
