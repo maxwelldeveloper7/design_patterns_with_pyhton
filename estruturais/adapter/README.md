@@ -1,7 +1,10 @@
 # Padrão Adapter - Exemplo de Processamento de Pagamentos
 
 ## Visão Geral
-Este exemplo demonstra a implementação do **Padrão Adapter** para integrar um sistema legado de pagamentos com uma interface moderna. O padrão permite que classes com interfaces incompatíveis trabalhem juntas.
+O padrão de projeto Adapter (Adaptador) é um padrão estrutural que permite a colaboração entre objetos com interfaces incompatíveis. Ele atua como uma camada intermediária que converte a interface de uma classe existente em outra interface que o cliente espera, sem modificar o código original das classes envolvidas.
+
+## Cenário
+Imagine que você tem um sistema antigo de processamento de pagamentos que não pode ser modificado, mas você deseja integrá-lo a um novo sistema que utiliza uma interface diferente. O Adapter atua como um intermediário, convertendo chamadas da nova interface para a antiga.
 
 ## Estrutura do Padrão
 ![](../../assets/img/adapter.png)
@@ -50,16 +53,81 @@ class PaymentAdapter(PaymentProcessor):
         self._legacy_system.make_transaction(amount)
 ```
 
-## Exemplo de Uso
+## Código
 ```python
+from abc import ABC, abstractmethod
+
+# -------------------------------
+# Interface esperada pelo sistema
+# -------------------------------
+
+class PaymentProcessor(ABC):
+    """
+    Interface formal que define o contrato para qualquer processador de pagamentos.
+    A utilização de ABC contribui para a segurança do design e evita implementações incompletas.
+    """
+
+    @abstractmethod
+    def process_payment(self, amount: float) -> None:
+        """
+        Processa um pagamento no valor especificado.
+        As subclasses devem implementar este método obrigatoriamente.
+        """
+        pass
+
+
+# -------------------------------
+# Código legado (não pode ser alterado)
+# -------------------------------
+
+class LegacyPaymentSystem:
+    """
+    Classe de um sistema antigo cuja interface é incompatível com a atual.
+    O método make_transaction() possui assinatura diferente.
+    """
+
+    def make_transaction(self, value: float) -> None:
+        print(f"[LEGADO] Pagamento realizado no valor de R$ {value:.2f}")
+
+
+# -------------------------------
+# Adapter
+# -------------------------------
+
+class PaymentAdapter(PaymentProcessor):
+    """
+    Adapter que converte a interface moderna (process_payment)
+    para a interface antiga (make_transaction).
+    """
+
+    def __init__(self, legacy_system: LegacyPaymentSystem) -> None:
+        self._legacy_system = legacy_system
+
+    def process_payment(self, amount: float) -> None:
+        """
+        Implementação do método da interface moderna.
+        Aqui ocorre a chamada adaptada ao sistema legado.
+        """
+        self._legacy_system.make_transaction(amount)
+
+
+# -------------------------------
+# Uso prático do Adapter
+# -------------------------------
+
 legacy = LegacyPaymentSystem()
 processor = PaymentAdapter(legacy)
 processor.process_payment(150.00)
-```
 
+```
+## Executando o Código
+
+```bash
+python exemplo_process_payment.py
+```
 ## Saída
 ```
-[LEGADO] Pagamento realizado no valor de R$ 151.50
+[LEGADO] Pagamento realizado no valor de R$ 150.00
 ```
 
 ## Quando Usar
