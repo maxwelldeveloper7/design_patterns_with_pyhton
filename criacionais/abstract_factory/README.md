@@ -1,7 +1,10 @@
 # Padrão Abstract Factory - Exemplo de Plataforma Mobile
 
 ## Visão Geral
-Este exemplo demonstra a implementação do **Padrão Abstract Factory** para criar componentes de UI multiplataforma. O padrão fornece uma interface para criar famílias de objetos relacionados sem especificar suas classes concretas.
+O Abstract Factory é um objeto que encapsula a lógica de criação de um conjunto completo de produtos que devem ser compatíveis entre si. Ele abstrai o processo de instanciação, permitindo que o código do cliente manipule apenas interfaces (abstrações) em vez de classes concretas.
+
+## Cenário
+Imagine que você está desenvolvendo uma aplicação móvel que deve suportar múltiplas plataformas, como Android e iOS. Cada plataforma tem seus próprios estilos e componentes de interface do usuário (UI). Usando o padrão Abstract Factory, você pode criar uma fábrica para cada plataforma que produz componentes UI específicos, garantindo que todos os componentes usados na aplicação sejam consistentes com a plataforma escolhida.
 
 ## Estrutura do Padrão
 ![](../../assets/img/abstraic_factory.png)
@@ -34,20 +37,142 @@ Este exemplo demonstra a implementação do **Padrão Abstract Factory** para cr
 3. **Fácil Extensão** - Novas plataformas podem ser adicionadas sem modificar código existente
 4. **Baixo Acoplamento** - Cliente depende apenas de interfaces abstratas
 
-## Exemplo de Uso
+## Código
 
 ```python
-# Escolhe a plataforma (pode vir de config, API, etc.)
-plataforma = "android"
+from abc import ABC, abstractmethod
 
-if plataforma == "android":
-    factory = AndroidFactory()
-else:
-    factory = IOSFactory()
+# ======================================================================
+# PRODUTOS ABSTRATOS
+# Cada produto define uma interface que todos os produtos concretos devem seguir.
+# ======================================================================
 
-# Cria aplicação com a fábrica escolhida
-app = Aplicacao(factory)
-app.renderizar_tela()
+class Botao(ABC):
+    @abstractmethod
+    def desenhar(self) -> None:
+        """Renderiza o botão na tela."""
+        pass
+
+
+class Checkbox(ABC):
+    @abstractmethod
+    def desenhar(self) -> None:
+        """Renderiza a caixa de seleção na tela."""
+        pass
+
+
+# ======================================================================
+# PRODUTOS CONCRETOS
+# Cada fábrica concreta gerará seus próprios produtos específicos da plataforma.
+# ======================================================================
+
+class AndroidBotao(Botao):
+    def desenhar(self) -> None:
+        print("Desenhando botão no estilo Android.")
+
+
+class AndroidCheckbox(Checkbox):
+    def desenhar(self) -> None:
+        print("Desenhando checkbox no estilo Android.")
+
+
+class IOSBotao(Botao):
+    def desenhar(self) -> None:
+        print("Desenhando botão no estilo iOS.")
+
+
+class IOSCheckbox(Checkbox):
+    def desenhar(self) -> None:
+        print("Desenhando checkbox no estilo iOS.")
+
+
+# ======================================================================
+# ABSTRACT FACTORY
+# Declara um conjunto de métodos para criação de famílias de produtos.
+# Todas as fábricas concretas devem implementar esses métodos.
+# ======================================================================
+
+class UIFactory(ABC):
+    @abstractmethod
+    def criar_botao(self) -> Botao:
+        """Cria um botão compatível com a plataforma."""
+        pass
+
+    @abstractmethod
+    def criar_checkbox(self) -> Checkbox:
+        """Cria um checkbox compatível com a plataforma."""
+        pass
+
+
+# ======================================================================
+# FACTORIES CONCRETAS
+# Cada fábrica retorna produtos consistentes entre si.
+# Exemplo: A fábrica Android cria somente widgets Android.
+# ======================================================================
+
+class AndroidFactory(UIFactory):
+    def criar_botao(self) -> Botao:
+        return AndroidBotao()
+
+    def criar_checkbox(self) -> Checkbox:
+        return AndroidCheckbox()
+
+
+class IOSFactory(UIFactory):
+    def criar_botao(self) -> Botao:
+        return IOSBotao()
+
+    def criar_checkbox(self) -> Checkbox:
+        return IOSCheckbox()
+
+
+# ======================================================================
+# CÓDIGO CLIENTE
+# Trabalha APENAS com as interfaces abstratas.
+# Não conhece detalhes das plataformas.
+# Isso facilita testes, extensões e redução de acoplamento.
+# ======================================================================
+
+class Aplicacao:
+    def __init__(self, factory: UIFactory) -> None:
+        # A factory é injetada, permitindo flexibilidade e substituição fácil.
+        self._factory = factory
+
+        # Cria os componentes da interface usando a Abstract Factory.
+        self.botao = self._factory.criar_botao()
+        self.checkbox = self._factory.criar_checkbox()
+
+    def renderizar_tela(self) -> None:
+        """Renderiza toda a UI da aplicação."""
+        self.botao.desenhar()
+        self.checkbox.desenhar()
+
+
+# ======================================================================
+# USO PRÁTICO
+# O cliente escolhe qual fábrica utilizar (Android ou iOS).
+# A aplicação automaticamente cria os widgets correspondentes.
+# ======================================================================
+
+if __name__ == "__main__":
+
+    # Exemplo de escolha baseada em contexto real (REST, mobile, config etc.)
+    plataforma = "android"  # poderia vir de config.json, API, variáveis de ambiente...
+
+    if plataforma == "android":
+        factory = AndroidFactory()
+    else:
+        factory = IOSFactory()
+
+    app = Aplicacao(factory)
+    app.renderizar_tela()
+
+```
+
+## Executando o Código
+
+```bash
+python exemplo_mobile_plataform.py
 ```
 
 ## Saída

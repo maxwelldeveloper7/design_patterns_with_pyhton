@@ -1,7 +1,10 @@
 # Padrão Builder - Exemplo de Imóvel
 
 ## Visão Geral
-Este exemplo demonstra a implementação do **Padrão Builder** para construir objetos complexos de forma incremental e flexível. O padrão permite criar diferentes representações de um objeto usando o mesmo processo de construção.
+O Builder é usado para construir objetos que possuem muitos parâmetros opcionais ou configurações diferentes. Em vez de usar um construtor gigante (conhecido como "telescoping constructor") ou vários métodos setter propensos a erros, o Builder fornece uma interface fluente e passo a passo para configurar o objeto. 
+
+## Cenário
+Imagine que você está desenvolvendo um sistema imobiliário onde os usuários podem criar diferentes tipos de imóveis (casas, apartamentos, etc.) com várias características opcionais, como número de quartos, banheiros, área, garagem, etc. O Builder permite que você crie esses imóveis de forma flexível e legível.
 
 ## Estrutura do Padrão
 ![](../../assets/img/builder.png)

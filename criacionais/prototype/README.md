@@ -1,9 +1,12 @@
 # Padrão Prototype - Exemplo de Documento
 
 ## Visão Geral
-Este exemplo demonstra a implementação do **Padrão Prototype** para criar novos objetos clonando instâncias existentes. O padrão é útil quando a criação de objetos é custosa ou quando você precisa de objetos similares com pequenas variações.
+O padrão Prototype delega o processo de criação de cópias para o próprio objeto a ser clonado, utilizando uma interface comum (geralmente um método clone()). Isso significa que o código do cliente não precisa conhecer as classes concretas dos objetos que está copiando, apenas a interface de clonagem.
 
+## Cenário
+Imagine um sistema que gera documentos personalizados, como notas fiscais, relatórios e contratos. Cada documento tem uma estrutura básica, mas pode variar em conteúdo e metadados. Criar cada documento do zero pode ser custoso em termos de tempo e recursos, especialmente se a criação envolver configurações complexas.
 ## Estrutura do Padrão
+
 ![](../../assets/img/prototype.png)
 ### Interface Prototype
 - `Prototype` - Interface base que define o método `clone()`
@@ -28,16 +31,56 @@ def clone(self):
     return copy.deepcopy(self)
 ```
 
-### Uso Prático
+### Código
 ```python
-# Documento base (protótipo)
+import copy
+
+class Prototype:
+    """
+    Interface base com o método de clonagem.
+    Garante que todas as classes concretas implementem clone().
+    """
+    def clone(self):
+        raise NotImplementedError("A subclasse deve implementar clone().")
+
+
+class Document(Prototype):
+    """
+    Classe concreta que possui atributos que podem ser clonados.
+    Representa um documento personalizável.
+    """
+
+    def __init__(self, title, content, metadata):
+        # Atributos principais do documento.
+        self.title = title
+        self.content = content
+        
+        # Metadados: dicionário com informações adicionais.
+        # Deve ser clonado profundamente.
+        self.metadata = metadata  
+
+    def clone(self):
+        """
+        Cria uma cópia profunda do objeto.
+        Deep copy é essencial quando há estruturas mutáveis (listas, dicts etc.).
+        """
+        return copy.deepcopy(self)
+
+    def __str__(self):
+        """Retorna uma representação amigável para inspeção."""
+        return f"Document(title={self.title}, content={self.content}, metadata={self.metadata})"
+
+
+# ------------ USO PRÁTICO ------------ #
+
+# Documento base que servirá como protótipo.
 prototype_doc = Document(
     title="Template Básico",
     content="Conteúdo padrão do documento.",
     metadata={"author": "Sistema", "version": 1}
 )
 
-# Criando variações por clonagem
+# Produzindo novos documentos por clonagem.
 invoice = prototype_doc.clone()
 invoice.title = "Nota Fiscal"
 invoice.metadata["document_type"] = "NFe"
@@ -45,8 +88,17 @@ invoice.metadata["document_type"] = "NFe"
 report = prototype_doc.clone()
 report.title = "Relatório Financeiro"
 report.metadata["document_type"] = "Report"
-```
 
+# Visualização
+print(invoice)
+print(report)
+
+```
+## Executando o Código
+
+```bash
+python exemplo_documento.py
+```
 ## Saída
 ```
 Document(title=Nota Fiscal, content=Conteúdo padrão do documento., metadata={'author': 'Sistema', 'version': 1, 'document_type': 'NFe'})
